@@ -7,8 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/mrjones/oauth"
 )
 
 const (
@@ -24,27 +22,7 @@ const (
 )
 
 type Client struct {
-	HttpConn      *http.Client
-	OAuthConsumer *oauth.Consumer
-}
-
-func NewClient(consumerKey, consumerSecret string) *Client {
-	newClient := &Client{}
-
-	newClient.OAuthConsumer = oauth.NewConsumer(
-		consumerKey,
-		consumerSecret,
-		oauth.ServiceProvider{
-			RequestTokenUrl:   OAUTH_REQUES_TOKEN,
-			AuthorizeTokenUrl: OAUTH_AUTH_TOKEN,
-			AccessTokenUrl:    OAUTH_ACCESS_TOKEN,
-		},
-	)
-
-	//Enable debug info
-	newClient.OAuthConsumer.Debug(true)
-
-	return newClient
+	HttpConn *http.Client
 }
 
 func (c *Client) BasicQuery(queryString string) (interface{}, error) {
@@ -60,9 +38,10 @@ func (c *Client) BasicQuery(queryString string) (interface{}, error) {
 
 	var data map[string]interface{}
 	bits, err := ioutil.ReadAll(response.Body)
+	fmt.Println("BODY:", string(bits))
 	err = json.Unmarshal(bits, &data)
 
-	return data, err
+	return bits, err
 }
 
 func (c *Client) QueryTimeLine(count int) (interface{}, error) {

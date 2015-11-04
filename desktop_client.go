@@ -3,17 +3,29 @@ package twitter
 import (
 	"fmt"
 	"log"
+
+	"github.com/mrjones/oauth"
 )
 
 func NewDesktopClient(consumerKey, consumerSecret string) *DesktopClient {
-	newClient := NewClient(consumerKey, consumerKey)
-	newServer := new(DesktopClient)
-	newServer.Client = *newClient
-	return newServer
+	newDesktop := new(DesktopClient)
+	newDesktop.OAuthConsumer = oauth.NewConsumer(
+		consumerKey,
+		consumerSecret,
+		oauth.ServiceProvider{
+			RequestTokenUrl:   OAUTH_REQUES_TOKEN,
+			AuthorizeTokenUrl: OAUTH_AUTH_TOKEN,
+			AccessTokenUrl:    OAUTH_ACCESS_TOKEN,
+		},
+	)
+	//Enable debug info
+	newDesktop.OAuthConsumer.Debug(true)
+	return newDesktop
 }
 
 type DesktopClient struct {
 	Client
+	OAuthConsumer *oauth.Consumer
 }
 
 func (d *DesktopClient) DoAuth() error {
