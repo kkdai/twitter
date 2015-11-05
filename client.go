@@ -16,16 +16,22 @@ const (
 	OAUTH_ACCESS_TOKEN string = "https://api.twitter.com/oauth/access_token"
 
 	//List API URLs
-	API_BASE     string = "https://api.twitter.com/1.1/"
-	API_TIMELINE string = API_BASE + "statuses/home_timeline.json"
-	API_FOLLOWER string = API_BASE + "followers/ids.json"
+	API_BASE           string = "https://api.twitter.com/1.1/"
+	API_TIMELINE       string = API_BASE + "statuses/home_timeline.json"
+	API_FOLLOWERS_IDS  string = API_BASE + "followers/ids.json"
+	API_FOLLOWERS_LIST string = API_BASE + "followers/list.json"
+	API_FOLLOWER_INFO  string = API_BASE + "users/show.json"
 )
 
 type Client struct {
 	HttpConn *http.Client
 }
 
-func (c *Client) BasicQuery(queryString string) (interface{}, error) {
+func (c *Client) HasAuth() bool {
+	return c.HttpConn != nil
+}
+
+func (c *Client) BasicQuery(queryString string) ([]byte, error) {
 	if c.HttpConn == nil {
 		return nil, errors.New("No Client OAuth")
 	}
@@ -36,20 +42,38 @@ func (c *Client) BasicQuery(queryString string) (interface{}, error) {
 	}
 	defer response.Body.Close()
 
-	var data map[string]interface{}
 	bits, err := ioutil.ReadAll(response.Body)
-	fmt.Println("BODY:", string(bits))
-	err = json.Unmarshal(bits, &data)
-
 	return bits, err
 }
 
-func (c *Client) QueryTimeLine(count int) (interface{}, error) {
+func (c *Client) QueryTimeLine(count int) (TimelineTweets, []byte, error) {
 	requesURL := fmt.Sprintf("%s?count=%d", API_TIMELINE, count)
-	return c.BasicQuery(requesURL)
+	data, err := c.BasicQuery(requesURL)
+	ret := TimelineTweets{}
+	err = json.Unmarshal(data, &ret)
+	return ret, data, err
 }
 
-func (c *Client) QueryFollower(count int) (interface{}, error) {
-	requesURL := fmt.Sprintf("%s?count=%d", API_FOLLOWER, count)
-	return c.BasicQuery(requesURL)
+func (c *Client) QueryFollower(count int) (Followers, []byte, error) {
+	requesURL := fmt.Sprintf("%s?count=%d", API_FOLLOWERS_LIST, count)
+	data, err := c.BasicQuery(requesURL)
+	ret := Followers{}
+	err = json.Unmarshal(data, &ret)
+	return ret, data, err
+}
+
+func (c *Client) QueryFollowerIDs(count int) (FollowerIDs, []byte, error) {
+	requesURL := fmt.Sprintf("%s?count=%d", API_FOLLOWERS_IDS, count)
+	data, err := c.BasicQuery(requesURL)
+	var ret FollowerIDs
+	err = json.Unmarshal(data, &ret)
+	return ret, data, err
+}
+
+func (c *Client) QueryFollowerById(id int) (UserDetail, []byte, error) {
+	requesURL := fmt.Sprintf("%s?user_id=%d&screen_name=twitterdev", API_FOLLOWER_INFO, id)
+	data, err := c.BasicQuery(requesURL)
+	var ret UserDetail
+	err = json.Unmarshal(data, &ret)
+	return ret, data, err
 }
