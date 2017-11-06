@@ -1,7 +1,6 @@
 package twitter
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/mrjones/oauth"
@@ -23,10 +22,9 @@ func NewServerClient(consumerKey, consumerSecret string) *ServerClient {
 	)
 
 	//Enable debug info
-	newServer.OAuthConsumer.Debug(true)
+	newServer.OAuthConsumer.Debug(false)
 
 	// newServer.Client = *newClient
-	fmt.Println("[server] init server")
 	newServer.OAuthTokens = make(map[string]*oauth.RequestToken)
 	return newServer
 }
@@ -38,10 +36,8 @@ type ServerClient struct {
 }
 
 func (s *ServerClient) GetAuthURL(tokenUrl string) string {
-	fmt.Println("[server] tokenurl=", tokenUrl)
-	fmt.Printf("[server] consumer=%v \n", s.OAuthConsumer)
 	token, requestUrl, err := s.OAuthConsumer.GetRequestTokenAndUrl(tokenUrl)
-	fmt.Println("[server] token=", token, " requestUrl=", requestUrl, " err=", err)
+
 	if err != nil {
 		log.Fatal(err)
 	}
