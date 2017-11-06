@@ -19,7 +19,8 @@ func NewDesktopClient(consumerKey, consumerSecret string) *DesktopClient {
 		},
 	)
 	//Enable debug info
-	newDesktop.OAuthConsumer.Debug(true)
+	newDesktop.OAuthConsumer.Debug(false)
+
 	return newDesktop
 }
 
