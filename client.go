@@ -71,7 +71,7 @@ func (c *Client) QueryFollowerIDs(count int) (FollowerIDs, []byte, error) {
 }
 
 func (c *Client) QueryFollowerById(id int) (UserDetail, []byte, error) {
-	requesURL := fmt.Sprintf("%s?user_id=%d&screen_name=twitterdev", API_FOLLOWER_INFO, id)
+	requesURL := fmt.Sprintf("%s?user_id=%d", API_FOLLOWER_INFO, id)
 	data, err := c.BasicQuery(requesURL)
 	var ret UserDetail
 	err = json.Unmarshal(data, &ret)
