@@ -35,26 +35,29 @@ type ServerClient struct {
 	OAuthTokens   map[string]*oauth.RequestToken
 }
 
-func (s *ServerClient) GetAuthURL(tokenUrl string) string {
+func (s *ServerClient) GetAuthURL(tokenUrl string) (string, error) {
 	token, requestUrl, err := s.OAuthConsumer.GetRequestTokenAndUrl(tokenUrl)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return "", nil
 	}
 	// Make sure to save the token, we'll need it for AuthorizeToken()
 	s.OAuthTokens[token.Token] = token
-	return requestUrl
+	return requestUrl, nil
 }
 
 func (s *ServerClient) CompleteAuth(tokenKey, verificationCode string) error {
 	accessToken, err := s.OAuthConsumer.AuthorizeToken(s.OAuthTokens[tokenKey], verificationCode)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 
 	s.HttpConn, err = s.OAuthConsumer.MakeHttpClient(accessToken)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 	return nil
 }
