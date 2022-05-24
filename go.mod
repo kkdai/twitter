@@ -1,4 +1,4 @@
-module twitter
+module github.com/kkdai/twitter
 
 go 1.18
 
