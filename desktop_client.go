@@ -33,7 +33,8 @@ func (d *DesktopClient) DoAuth() error {
 	requestToken, u, err := d.OAuthConsumer.GetRequestTokenAndUrl("oob")
 	fmt.Println("rest token=", requestToken, " err=", err)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 
 	fmt.Println("(1) Go to: " + u)
@@ -45,12 +46,14 @@ func (d *DesktopClient) DoAuth() error {
 
 	accessToken, err := d.OAuthConsumer.AuthorizeToken(requestToken, verificationCode)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 
 	d.HttpConn, err = d.OAuthConsumer.MakeHttpClient(accessToken)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 
 	return err
