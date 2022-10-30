@@ -75,6 +75,7 @@ func (c *Client) QueryMentionsTimeline(count int) (TimelineTweets, []byte, error
 	return ret, data, err
 }
 
+// Query timeline by count
 func (c *Client) QueryTimeLine(count int) (MentionsTimeline, []byte, error) {
 	requesURL := fmt.Sprintf("%s?count=%d", API_TIMELINE, count)
 	data, err := c.BasicQuery(requesURL)
@@ -83,6 +84,7 @@ func (c *Client) QueryTimeLine(count int) (MentionsTimeline, []byte, error) {
 	return ret, data, err
 }
 
+// Query follower timeline by count
 func (c *Client) QueryFollower(count int) (Followers, []byte, error) {
 	requesURL := fmt.Sprintf("%s?count=%d", API_FOLLOWERS_LIST, count)
 	data, err := c.BasicQuery(requesURL)
@@ -91,6 +93,7 @@ func (c *Client) QueryFollower(count int) (Followers, []byte, error) {
 	return ret, data, err
 }
 
+// Query FollowerID by count
 func (c *Client) QueryFollowerIDs(count int) (FollowerIDs, []byte, error) {
 	requesURL := fmt.Sprintf("%s?count=%d", API_FOLLOWERS_IDS, count)
 	data, err := c.BasicQuery(requesURL)
@@ -99,6 +102,7 @@ func (c *Client) QueryFollowerIDs(count int) (FollowerIDs, []byte, error) {
 	return ret, data, err
 }
 
+// Query FollowerID by ID.
 func (c *Client) QueryFollowerById(id int) (UserDetail, []byte, error) {
 	requesURL := fmt.Sprintf("%s?user_id=%d", API_FOLLOWER_INFO, id)
 	data, err := c.BasicQuery(requesURL)
