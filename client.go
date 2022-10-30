@@ -16,11 +16,12 @@ const (
 	OAUTH_ACCESS_TOKEN string = "https://api.twitter.com/oauth/access_token"
 
 	//List API URLs
-	API_BASE           string = "https://api.twitter.com/1.1/"
-	API_TIMELINE       string = API_BASE + "statuses/home_timeline.json"
-	API_FOLLOWERS_IDS  string = API_BASE + "followers/ids.json"
-	API_FOLLOWERS_LIST string = API_BASE + "followers/list.json"
-	API_FOLLOWER_INFO  string = API_BASE + "users/show.json"
+	API_BASE               string = "https://api.twitter.com/1.1/"
+	API_TIMELINE           string = API_BASE + "statuses/home_timeline.json"
+	API_MENTIONS_TIMMELINE string = API_BASE + "statuses/mentions_timeline.json"
+	API_FOLLOWERS_IDS      string = API_BASE + "followers/ids.json"
+	API_FOLLOWERS_LIST     string = API_BASE + "followers/list.json"
+	API_FOLLOWER_INFO      string = API_BASE + "users/show.json"
 )
 
 type Client struct {
@@ -44,6 +45,15 @@ func (c *Client) BasicQuery(queryString string) ([]byte, error) {
 
 	bits, err := ioutil.ReadAll(response.Body)
 	return bits, err
+}
+
+// Mentions Timeline.
+func (c *Client) QueryMentionsTimeline(count int) (TimelineTweets, []byte, error) {
+	requesURL := fmt.Sprintf("%s?count=%d", API_TIMELINE, count)
+	data, err := c.BasicQuery(requesURL)
+	ret := TimelineTweets{}
+	err = json.Unmarshal(data, &ret)
+	return ret, data, err
 }
 
 func (c *Client) QueryTimeLine(count int) (TimelineTweets, []byte, error) {
